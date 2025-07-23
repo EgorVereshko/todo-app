@@ -184,7 +184,7 @@ function App() {
   const fetchQuote = async () => {
     setIsLoading(true);
 
-    const response = await fetch("/quotes.json");
+    const response = await fetch(process.env.PUBLIC_URL + "/quotes.json");
     const quotesData = await response.json();
     const quotes = quotesData.quotes;
     const validQuotes = quotes.filter(
