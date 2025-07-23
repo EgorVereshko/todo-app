@@ -1,0 +1,23 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.quote {
+  margin-top: 10px;
+  padding: 10px;
+  padding-left: 30px;
+  background: #ebf8ff;
+  border-radius: 6px;
+  color: #2b6cb0;
+  font-size: italic;
+  font-size: 14px;
+  border-left: 3px solid #4299e1;
+  animation: fadeIn 0.5s ease-in-out;
+}

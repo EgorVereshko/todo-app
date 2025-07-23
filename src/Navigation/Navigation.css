@@ -1,0 +1,9 @@
+.navigation-card {
+  margin: 16px;
+  background: linear-gradient(135deg, #e6f0ff, #d0e3ff);
+  border-radius: 12px;
+}
+
+.responsive-buttons {
+  padding: 12px;
+}
