@@ -1,46 +1,36 @@
 import { Card, Flex, Title, Text, Avatar } from "@vkontakte/vkui";
 import "./ProfileView.css";
 
-const ProfileView = ({ user, tasks, incompleteCount, totalTimeSpent }) => {
+const ProfileView = ({ user, totalTimeSpent, totalTasksCreated }) => {
   if (!user) return null;
 
-  const completedTasksCount = tasks.length - incompleteCount;
-
   const getUserRating = () => {
-    if (completedTasksCount < 10) return "Новичок";
-    if (completedTasksCount < 50) return "Профи";
-    if (completedTasksCount < 100) return "Мастер";
-    if (completedTasksCount < 200) return "Эксперт";
-    if (completedTasksCount < 300) return "Гуру продуктивности";
-    if (completedTasksCount < 500) return "Титан задач";
-    if (completedTasksCount < 750) return "Легенда планирования";
-    if (completedTasksCount < 1000) return "Повелитель дедлайнов";
-    return "Бог организации";
+    if (totalTasksCreated < 15) return "Новичок";
+    if (totalTasksCreated >= 15 && totalTasksCreated < 40) return "Исполнитель"; 
+    if (totalTasksCreated >= 40 && totalTasksCreated < 75) return "Организатор";
+    if (totalTasksCreated >= 75 && totalTasksCreated < 150) return "Мастер";
+    if (totalTasksCreated >= 150 && totalTasksCreated < 250) return "Эксперт";
+    if (totalTasksCreated >= 250 && totalTasksCreated < 400) return "Гуру продуктивности";
+    if (totalTasksCreated >= 400 && totalTasksCreated < 600) return "Титан задач";
+    if (totalTasksCreated >= 600 && totalTasksCreated < 800) return "Легенда планирования";
+    if (totalTasksCreated >= 800 && totalTasksCreated < 1000) return "Повелитель времени";
+    return "Бог продуктивности";
   };
 
   const getRatingColor = () => {
-    switch (getUserRating()) {
-      case "Новичок":
-        return "#718096";
-      case "Профи":
-        return "#4299e1";
-      case "Мастер":
-        return "#9f7aea";
-      case "Эксперт":
-        return "#f6ad55";
-      case "Гуру продуктивности":
-        return "#48bb78";
-      case "Титан задач":
-        return "#ed8936";
-      case "Легенда планирования":
-        return "#667eea";
-      case "Повелитель дедлайнов":
-        return "#e53e3e";
-      case "Бог организации":
-        return "#d53f8c";
-      default:
-        return "#38b2ac";
-    }
+    const colors = {
+      "Новичок": "#94A3B8",
+      "Исполнитель": "#38BDF8",
+      "Организатор": "#818CF8",
+      "Мастер": "#C084FC",
+      "Эксперт": "#FB923C",
+      "Гуру": "#34D399",
+      "Титан": "#F97316",
+      "Легенда": "#6366F1",
+      "Повелитель времени": "#EF4444",
+      "Бог продуктивности": "#DB2777"
+    };
+    return colors[getUserRating()] || "#38BDF8"; 
   };
 
   const formatTime = (seconds) => {
@@ -79,7 +69,7 @@ const ProfileView = ({ user, tasks, incompleteCount, totalTimeSpent }) => {
               fontSize: "14px",
             }}
           >
-            Выполнено задач: {completedTasksCount}
+            Создано задач: {totalTasksCreated}
           </Text>
         </Flex>
 

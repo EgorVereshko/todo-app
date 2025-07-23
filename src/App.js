@@ -263,6 +263,7 @@ function App() {
             tasks={tasks}
             incompleteCount={incompleteCount}
             totalTimeSpent={totalTimeSpent}
+            totalTasksCreated={totalTasksCreated}
           />
         )}
         {activeView === "stats" && (

@@ -37,7 +37,7 @@ const StatsView = ({
       <Flex direction="column" gap="m">
         <Flex direction="row" gap="m" align="center">
           <Text weight="2" className="stats-name">
-            Всего задач создано:
+            Создано задач:
           </Text>
           <Counter
             mode="prominent"
