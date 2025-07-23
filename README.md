@@ -24,4 +24,4 @@
 ### `npm run build`
 
 # Публикация приложения
-### `npm run build`
+### `npm run deploy`
