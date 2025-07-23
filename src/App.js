@@ -18,7 +18,6 @@ function App() {
   const quoteTimeoutRef = useRef(null);
   const [totalTasksCreated, setTotalTasksCreated] = useState(0);
   const [activeView, setActiveView] = useState("tasks");
-  const [error, setError] = useState(null);
   const [recentlyCompletedTaskId, setRecentlyCompletedTaskId] = useState(null);
 
   // Инициализация VK Bridge
@@ -211,61 +210,6 @@ function App() {
     }, 7000);
   };
 
-  const shareToVK = async () => {
-    console.log("Starting shareToVK...");
-    if (!motivationQuote) {
-      console.warn("No motivation quote to share");
-      return;
-    }
-    if (isLoading) {
-      console.warn("Sharing already in progress");
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      setError(null);
-      console.log("Preparing to share...");
-
-      console.log("Checking client capabilities...");
-      const capabilities = await bridge.send("VKWebAppGetClientVersion");
-      console.log("Client capabilities:", capabilities);
-
-      console.log("Requesting permissions...");
-      await bridge.send("VKWebAppGetAuthToken", {
-        app_id: 53906243,
-        scope: "stories",
-      });
-
-      console.log("Sending story data...");
-      const storyParams = {
-        background_type: "color",
-        color: "#4299e1",
-        text: motivationQuote,
-        attachment: {
-          text: "Моя мотивация из TimeTask",
-          type: "text",
-          url: "https://vk.com/app" + 53906243,
-        },
-      };
-      console.log("Story params:", storyParams);
-
-      const result = await bridge.send("VKWebAppShowStoryBox", storyParams);
-      console.log("Story published successfully:", result);
-    } catch (err) {
-      console.error("Full error details:", {
-        message: err.message,
-        stack: err.stack,
-        name: err.name,
-        data: err.data,
-      });
-      setError(`Ошибка: ${err.message}. Код: ${err.code || "неизвестен"}`);
-    } finally {
-      console.log("Sharing process completed");
-      setIsLoading(false);
-    }
-  };
-
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !isLoading) {
       addTask();
@@ -306,7 +250,6 @@ function App() {
             deleteSubtask={deleteSubtask}
             toggleSubtaskComplete={toggleSubtaskComplete}
             motivationQuote={motivationQuote}
-            shareToVK={shareToVK}
             isLoading={isLoading}
             incompleteCount={incompleteCount}
             completionPercentage={completionPercentage}

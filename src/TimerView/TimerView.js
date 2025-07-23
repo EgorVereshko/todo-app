@@ -76,16 +76,6 @@ const TimerView = ({ onTimeSpent }) => {
     return () => clearInterval(timerRef.current);
   }, [isTimerRunning]);
 
-  // Обработчики таймера
-  const handleTimerChange = (type, value) => {
-    const numValue = parseInt(value) || 0;
-    if (type === "minutes") {
-      setTimerMinutes(Math.max(0, Math.min(120, numValue)));
-    } else {
-      setTimerSeconds(Math.max(0, Math.min(59, numValue)));
-    }
-  };
-
   const startTimer = () => {
     const totalSeconds =
       secondsLeft > 0 ? secondsLeft : timerMinutes * 60 + timerSeconds;
@@ -189,38 +179,6 @@ const TimerView = ({ onTimeSpent }) => {
       </div>
 
       <Flex direction="column" gap="m">
-        <div className="timer-controls">
-          <div className="time-input-container">
-            <Text weight="2" className="time-input-label">
-              Минуты:
-            </Text>
-            <input
-              type="number"
-              value={timerMinutes}
-              onChange={(e) => handleTimerChange("minutes", e.target.value)}
-              min="0"
-              max="120"
-              disabled={isTimerRunning}
-              className="time-input"
-            />
-          </div>
-
-          <div className="time-input-container">
-            <Text weight="2" className="time-input-label">
-              Секунды:
-            </Text>
-            <input
-              type="number"
-              value={timerSeconds}
-              onChange={(e) => handleTimerChange("seconds", e.target.value)}
-              min="0"
-              max="59"
-              disabled={isTimerRunning}
-              className="time-input"
-            />
-          </div>
-        </div>
-
         <div className="preset-buttons">
           {[5, 10, 25].map((minutes) => (
             <Button
