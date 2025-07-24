@@ -75,7 +75,7 @@ function App() {
       const lines = wrapText(ctx, quoteText, width * 0.85);
       lines.forEach((line, i) => {
         const y = height / 2 + (i - lines.length / 2) * lineHeight;
-        ctx.fillText(`"${line}"`, width / 2, y);
+        ctx.fillText(line, width / 2, y);
       });
 
       ctx.font = '600 28px sans-serif';

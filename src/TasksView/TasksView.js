@@ -322,7 +322,7 @@ const TasksView = ({
                           fontSize: "16px",
                         }}
                       >
-                        "{motivationQuote}"
+                        {motivationQuote}
                         <Button
                           size="m" appearance="accent" mode="primary"
                           disabled={isLoading}
