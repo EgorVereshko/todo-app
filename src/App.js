@@ -124,28 +124,94 @@ function App() {
   };
 
   // Загрузка и сохранение данных
+  // useEffect(() => {
+  //   const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  //   const tasksWithIds = savedTasks.map((task) => ({
+  //     ...task,
+  //     id: task.id || Date.now() + Math.random(),
+  //     subtasks: task.subtasks
+  //       ? task.subtasks.map((sub) => ({
+  //           ...sub,
+  //           id: sub.id || Date.now() + Math.random(),
+  //         }))
+  //       : [],
+  //   }));
+  //   setTasks(tasksWithIds);
+
+  //   const savedCounter =
+  //     parseInt(localStorage.getItem("totalTasksCreated")) || 0;
+  //   setTotalTasksCreated(savedCounter);
+  // }, []);
   useEffect(() => {
-    const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    const tasksWithIds = savedTasks.map((task) => ({
-      ...task,
-      id: task.id || Date.now() + Math.random(),
-      subtasks: task.subtasks
-        ? task.subtasks.map((sub) => ({
+    const loadTasks = async () => {
+      try {
+        const { keys } = await bridge.send("VKWebAppStorageGet", {
+          keys: ["user_tasks", "total_tasks_created"]
+        });
+
+        const taskData = keys.find((item) => item.key === "user_tasks")?.value || "[]";
+        const counterData = keys.find((item) => item.key === "total_tasks_created")?.value || "0";
+
+        const parsedTasks = JSON.parse(taskData);
+        const parsedCounter = parseInt(counterData) || 0;
+
+        const tasksWithIds = parsedTasks.map((task) => ({
+          ...task,
+          id: task.id || Date.now() + Math.random(),
+          subtasks: task.subtasks?.map((sub) => ({
             ...sub,
             id: sub.id || Date.now() + Math.random(),
-          }))
-        : [],
-    }));
-    setTasks(tasksWithIds);
+          })) || []
+        }));
 
-    const savedCounter =
-      parseInt(localStorage.getItem("totalTasksCreated")) || 0;
-    setTotalTasksCreated(savedCounter);
+        setTasks(tasksWithIds);
+        setTotalTasksCreated(parsedCounter);
+      } catch (error) {
+        console.warn("Не удалось загрузить из VK Storage, fallback на localStorage", error);
+
+        const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        const tasksWithIds = savedTasks.map((task) => ({
+          ...task,
+          id: task.id || Date.now() + Math.random(),
+          subtasks: task.subtasks?.map((sub) => ({
+            ...sub,
+            id: sub.id || Date.now() + Math.random(),
+          })) || []
+        }));
+        setTasks(tasksWithIds);
+
+        const savedCounter = parseInt(localStorage.getItem("totalTasksCreated")) || 0;
+        setTotalTasksCreated(savedCounter);
+      }
+    };
+
+    loadTasks();
   }, []);
 
+  // useEffect(() => {
+  //   localStorage.setItem("tasks", JSON.stringify(tasks));
+  //   localStorage.setItem("totalTasksCreated", totalTasksCreated.toString());
+  // }, [tasks, totalTasksCreated]);
   useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-    localStorage.setItem("totalTasksCreated", totalTasksCreated.toString());
+    const saveToStorage = async () => {
+      try {
+        await bridge.send("VKWebAppStorageSet", {
+          key: "user_tasks",
+          value: JSON.stringify(tasks),
+        });
+
+        await bridge.send("VKWebAppStorageSet", {
+          key: "total_tasks_created",
+          value: totalTasksCreated.toString(),
+        });
+      } catch (error) {
+        console.warn("Ошибка сохранения в VK Storage, fallback на localStorage", error);
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+        localStorage.setItem("totalTasksCreated", totalTasksCreated.toString());
+      }
+    };
+
+    saveToStorage();
   }, [tasks, totalTasksCreated]);
 
   // Функции для задач
