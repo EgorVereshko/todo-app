@@ -50,6 +50,79 @@ function App() {
     localStorage.setItem("totalTasksCreated", "0");
   };
 
+  const generateImageFromQuote = (quoteText, appName = "ЗаДело!") => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      const width = 720;
+      const height = 1280;
+      canvas.width = width;
+      canvas.height = height;
+
+      ctx.fillStyle = '#2b6cb0';
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 42px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('✅ Задача выполнена!', width / 2, 100);
+
+      ctx.font = 'italic 36px serif';
+      ctx.fillStyle = '#fefefe';
+
+      const lineHeight = 50;
+      const lines = wrapText(ctx, quoteText, width * 0.85);
+      lines.forEach((line, i) => {
+        const y = height / 2 + (i - lines.length / 2) * lineHeight;
+        ctx.fillText(`"${line}"`, width / 2, y);
+      });
+
+      ctx.font = '600 28px sans-serif';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.textAlign = 'center';
+      const footerY = height - 60;
+      ctx.fillText(appName, width / 2, footerY);
+
+      resolve(canvas.toDataURL('image/png'));
+    });
+  };
+
+  const wrapText = (ctx, text, maxWidth) => {
+    const words = text.split(' ');
+    const lines = [];
+    let currentLine = words[0];
+
+    for (let i = 1; i < words.length; i++) {
+      const word = words[i];
+      const width = ctx.measureText(currentLine + ' ' + word).width;
+      if (width < maxWidth) {
+        currentLine += ' ' + word;
+      } else {
+        lines.push(currentLine);
+        currentLine = word;
+      }
+    }
+
+    lines.push(currentLine);
+    return lines;
+  };
+
+  const shareToVK = async (quoteText) => {
+    try {
+      const imageBase64 = await generateImageFromQuote(quoteText, "ЗаДело!");
+      await bridge.send("VKWebAppShowStoryBox", {
+        background_type: "image",
+        url: imageBase64,
+      });
+    } catch (error) {
+      if (error?.error_data?.error_code === 17) {
+        return;
+      }
+      console.error("Ошибка публикации в VK Stories:", error);
+    }
+  };
+
   // Загрузка и сохранение данных
   useEffect(() => {
     const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
@@ -255,6 +328,7 @@ function App() {
             completionPercentage={completionPercentage}
             handleKeyPress={handleKeyPress}
             recentlyCompletedTaskId={recentlyCompletedTaskId}
+            shareToVK={shareToVK}
           />
         )}
         {activeView === "profile" && (

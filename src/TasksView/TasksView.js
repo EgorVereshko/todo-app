@@ -1,4 +1,4 @@
-import { Card, Title, Text, Tooltip } from "@vkontakte/vkui";
+import { Card, Title, Button, Text, Tooltip } from "@vkontakte/vkui";
 import "./TasksView.css";
 import "../App.css";
 
@@ -20,6 +20,7 @@ const TasksView = ({
   completionPercentage,
   handleKeyPress,
   recentlyCompletedTaskId,
+  shareToVK
 }) => {
   const handleToggleComplete = (taskIndex) => {
     const task = tasks[taskIndex];
@@ -322,6 +323,14 @@ const TasksView = ({
                         }}
                       >
                         "{motivationQuote}"
+                        <Button
+                          size="m" appearance="accent" mode="primary"
+                          disabled={isLoading}
+                          style={{ background: '#3182ce', width: '100%', marginTop: '8px' }}
+                          onClick={() => shareToVK(motivationQuote)}
+                        >
+                          Поделиться в VK
+                        </Button>
                       </div>
                     </div>
                   )}
